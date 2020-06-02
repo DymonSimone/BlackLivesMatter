@@ -2,37 +2,22 @@ import 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { StyleSheet, View, Image, Text, FlatList, Alert} from 'react-native';
+import { StyleSheet, View, Image, Text, FlatList, Alert, ScrollView} from 'react-native';
 import { useState } from 'react';
 
 
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-];
 
-function Item({ title }) {
+function Item({ title, date, location, position}) {
   return (
+
     <View style={styles.item}>
+    <Text style={styles.index}>{position}</Text>
       <Text style={styles.title}>{title}</Text>
+      <Text>{date}</Text>
+      <Text style={styles.locationItemText}>{location}</Text>
     </View>
   );
 }
-
-
-
-
-
 
 
 export default class HomeScreen extends React.Component{
@@ -142,12 +127,13 @@ _retrieveData = async () => {
 	try {
 	let names = []
 
-	for(var i = 0; i <= 7; i++)
+	for(var i = 0; i < 6; i++)
 	{
-		const jsonValue =  await AsyncStorage.getItem('Case '+i);
-   		const obj = JSON.parse(jsonValue)
-   		names.push(obj.name)
+		const victimsNames =  await AsyncStorage.getItem('Case '+i);
+   		const obj = JSON.parse(victimsNames)
+   		names.push(obj)
    		this.setState({data:names})
+
 	}
   
   } catch(e) {
@@ -164,17 +150,23 @@ render(){
 return(
 
 <View style={styles.container}>
-<Image source={pic} style={styles.memoir} imageStyle={{borderBottomRightRadius:65}}/>
+<Image source={pic} style={styles.memoir} imageStyle={{borderBottomRightRadius:35,borderBottomLeftRadius:35}} />
 <View style={styles.DarkOverlayOne}></View>
-<Text style={styles.nameText}>GeorgeFloyd</Text>
-<Text style={styles.dateText}>May 25, 2020</Text>
+<Text style={styles.nameText}>George Floyd</Text>
+<Text style={styles.dateText}>Killed: May 25, 2020</Text>
 <Text style={styles.placeText}>Minneapolis, Minnesota, U.S</Text>
+<View style={{ backgroundColor:'white', position:'absolute', top:'40%', width:'100%', height:'9%',borderBottomRightRadius:35,borderBottomLeftRadius:35,borderTopLeftRadius:35,borderTopRightRadius:35, marginTop:10,	padding:10, }}>
+ <Text style={{color:'white', alignSelf:'center', backgroundColor:'black'}}> BBBBB </Text>
+</View>
 <View style={styles.list}>
+<ScrollView>
+<Text style={{color:'white', alignSelf:'center'}}>Deceased</Text>
 <FlatList
         data={this.state.data}
-        renderItem={({ item }) => <Item title={item} />}
-        keyExtractor={item => item.id}
+        renderItem={({ item, index }) => <Item title={item.name} date={item.date} location={item.location} position={index+1} />}
+        keyExtractor={item => item.date}
       />
+</ScrollView>
 </View>
 </View>
 
@@ -214,14 +206,17 @@ const styles = StyleSheet.create({
   width:'100%',
   backgroundColor:'black',
   opacity:0.4,
-  borderBottomRightRadius:65,
+  borderBottomRightRadius:35,
+  borderBottomLeftRadius:35
   },
   memoir:{
   	width:'100%',
   	height:'40%',
   	margin:0,
   	padding:0,
-  	borderBottomRightRadius:65,
+  	borderBottomRightRadius:35,
+  	borderBottomLeftRadius:35
+  
 
   },
   nameText:{
@@ -254,19 +249,45 @@ const styles = StyleSheet.create({
 
   },
  item: {
-    backgroundColor: '#f9c2ff',
-    padding: 20,
-    marginVertical: 8,
+    backgroundColor: 'red',
+    padding:10,
+    marginVertical: 4,
+    borderRadius:15,
+
+    
+
   },
   title: {
     fontSize: 32,
+     marginRight:15,
+     fontWeight:'bold',
   },
 
   list:{
   	position:'absolute',
-  	top:'40%',
+  	top:'50%',
   	width:'100%',
+  	padding:10,
   },
+
+  locationItemText:{
+  	position:'absolute',
+  	bottom:0,
+  	right:0,
+  	margin:5,
+  	fontWeight:'normal',
+  	color:'white',
+
+  },
+
+  index:{
+  	position:'absolute',
+  	right:0,
+  	top:0,
+  	fontSize:25,
+  	padding:5,
+  	fontWeight:'bold',
+  }
 
 });
 
